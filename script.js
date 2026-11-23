@@ -122,7 +122,7 @@ function playTone(kind) {
 // =========================================================================
 // 4. DEFCON SWITCHER & MATRIX RAIN
 // =========================================================================
-let defconState = 5;
+let defconState = 1;
 let matrixInterval = null;
 
 function cycleDefcon() {
@@ -895,6 +895,7 @@ function escapeHtml(str) {
 // Initialize interactive modules immediately
 renderEvidence('ALL');
 buildSectorGrid();
+setDefcon(1);
 
 // Trigger hero name scramble on launch and every 7 seconds
 const heroTitleEl = document.getElementById('hero-title');
