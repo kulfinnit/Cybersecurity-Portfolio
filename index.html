@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kabiraj Sapkota | Information Security & Digital Forensics</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Matrix Code Rain Canvas (Active in DEFCON 1) -->
+  <canvas id="matrix-canvas" aria-hidden="true"></canvas>
+
+  <!-- Toast Banner -->
+  <div id="toast-banner" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- =========================================================================
+       STICKY TWO-TIER RESPONSIVE NAVIGATION BAR
+  ========================================================================= -->
+  <header class="site-header">
+    <!-- Tier 1: Live SOC Telemetry & Workstation Controls -->
+    <div class="header-tier-top">
+      <div class="container telemetry-bar">
+        <div class="soc-status-pill">
+          <span class="pulse-dot"></span>
+          <span>SOC: ONLINE | LONDON, UK</span>
+        </div>
+
+        <div class="telemetry-controls">
+          <div class="ctrl-pill rank-pill" title="Interact with the terminal, evidence locker, and cyber lab to level up!">
+            <span id="rank-title">RANK: RECON GUEST</span>
+            <span>|</span>
+            <strong id="rank-xp">0 XP</strong>
+          </div>
+
+          <button type="button" id="defcon-btn" onclick="cycleDefcon()" class="ctrl-pill defcon-btn-5">
+            DEFCON 5 (NORMAL)
+          </button>
+
+          <button type="button" id="hex-btn" onclick="toggleHexMode()" class="ctrl-pill">
+            HEX_MODE
+          </button>
+
+          <button type="button" id="sfx-btn" onclick="toggleSfx()" class="ctrl-pill active-cyan">
+            <svg id="sfx-off-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <line x1="23" y1="9" x2="17" y2="15"/>
+              <line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <svg id="sfx-on-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+            <span id="sfx-text">SFX: ON</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 2: Brand & Primary Section Links -->
+    <div class="header-tier-main">
+      <div class="container navbar-row">
+        <a href="#top" class="brand-link">
+          <span class="brand-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </span>
+          <span>KABIRAJ.DEV <span class="accent">// DFIR</span></span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary Navigation">
+          <a href="#terminal">TERMINAL</a>
+          <a href="#evidence">EVIDENCE</a>
+          <a href="#lab">CYBER_LAB</a>
+          <a href="#custody">CUSTODY</a>
+          <a href="#skills">SKILLS</a>
+          <a href="#contact">CONTACT</a>
+        </nav>
+
+        <button type="button" id="mobile-menu-btn" onclick="toggleMobileDrawer()" class="mobile-menu-toggle" aria-label="Toggle Navigation" aria-expanded="false">
+          <svg id="menu-open-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+          <svg id="menu-close-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Responsive Mobile Drawer -->
+    <nav id="mobile-drawer" class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="#terminal" onclick="closeMobileDrawer()">01. TERMINAL</a>
+      <a href="#evidence" onclick="closeMobileDrawer()">02. EVIDENCE_LOCKER</a>
+      <a href="#lab" onclick="closeMobileDrawer()">03. INTERACTIVE_CYBER_LAB</a>
+      <a href="#custody" onclick="closeMobileDrawer()">04. CHAIN_OF_CUSTODY</a>
+      <a href="#skills" onclick="closeMobileDrawer()">05. TECHNICAL_SKILLS</a>
+      <a href="#contact" onclick="closeMobileDrawer()">06. ENCRYPTED_CONTACT</a>
+    </nav>
+  </header>
+
+  <!-- =========================================================================
+       MAIN WORKSTATION CONTENT
+  ========================================================================= -->
+  <main id="top" class="container">
+    <!-- =======================================================================
+         SECTION 1: HERO & INTERACTIVE CLI WORKSTATION (#terminal)
+    ======================================================================= -->
+    <section id="terminal" class="hero-grid">
+      <div>
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>MSC CANDIDATE // UNIVERSITY OF EAST LONDON</span>
+          <span class="hex-meta">0x0010</span>
+        </div>
+
+        <h1 id="hero-title" class="hero-name" data-original="Kabiraj Sapkota" onmouseenter="scrambleHeroName(this)">
+          Kabiraj Sapkota
+        </h1>
+        <p class="hero-role">Information Security &amp; Digital Forensics Specialist</p>
+
+        <p class="hero-summary">
+          Postgraduate MSc student in <strong>Information Security and Digital Forensics</strong> at the <strong>University of East London</strong> (Sept 2026 &ndash; Present). Combining hands-on Python/Django engineering, IT systems administration, and digital forensic investigation to uncover artifacts and harden modern infrastructure.
+        </p>
+
+        <div class="hero-meta-grid">
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">CURRENT BASE</span>
+            <strong style="color:#FFF;">London, United Kingdom</strong>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">VERIFIED CREDENTIAL</span>
+            <strong style="color:var(--accent-emerald);">Python 3 ID: 1752129201709</strong>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#evidence" class="btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Inspect Evidence Locker</span>
+          </a>
+
+          <a href="#lab" class="btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>Launch Cyber Lab</span>
+          </a>
+
+          <a href="https://github.com/kulfinnit" target="_blank" rel="noopener noreferrer" class="btn-secondary" title="GitHub @kulfinnit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            <span>@kulfinnit</span>
+          </a>
+
+          <a href="https://linkedin.com/in/kabiraj-sapkota" target="_blank" rel="noopener noreferrer" class="btn-secondary" title="LinkedIn Profile">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+            </svg>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Interactive CLI Terminal -->
+      <div class="terminal-card">
+        <div class="terminal-topbar">
+          <div class="win-dots">
+            <span class="win-dot" style="background:#EF4444;"></span>
+            <span class="win-dot" style="background:#F59E0B;"></span>
+            <span class="win-dot" style="background:#10B981;"></span>
+          </div>
+          <span>kabiraj@uel-forensics: ~/workstation</span>
+          <span style="color:var(--accent-emerald);">zsh 5.9</span>
+        </div>
+
+        <div id="terminal-output" class="terminal-screen">
+          <div style="color:var(--accent-emerald);">[BOOT OK] DFIR Workstation v2026.09 initialized &mdash; University of East London Node.</div>
+          <div style="color:var(--text-muted);">Type a command below (e.g., <span style="color:var(--accent-cyan);">help</span>, <span style="color:var(--accent-cyan);">neofetch</span>, <span style="color:var(--accent-cyan);">whoami</span>) or click any quick-exec chip.</div>
+        </div>
+
+        <form id="terminal-form" class="terminal-prompt-bar">
+          <span style="color:var(--accent-emerald);font-weight:700;white-space:nowrap;">kabiraj@uel:~#</span>
+          <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" placeholder="Enter command (help, neofetch, scan, hack)..." aria-label="Terminal command input" />
+          <button type="submit" class="terminal-exec-btn">EXEC &crarr;</button>
+        </form>
+
+        <div class="quick-chips">
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('whoami')">whoami</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('neofetch')">neofetch</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('ls evidence/')">ls evidence/</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('cat education.log')">cat education.log</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('verify --cert')">verify --cert</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('scan')">scan</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('hack')" style="color:var(--accent-crimson);">hack</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('coffee')">coffee</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('sudo hire kabiraj')" style="color:var(--accent-emerald);">sudo hire kabiraj</button>
+          <button type="button" class="quick-chip" onclick="runTerminalCmd('clear')">clear</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 2: EVIDENCE LOCKER & CASE FILES (#evidence)
+    ======================================================================= -->
+    <section id="evidence">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>// 01. EVIDENCE_LOCKER &mdash; VERIFIED ENGINEERING ARTIFACTS</span>
+          </div>
+          <h2 class="section-title">Forensic Case Files &amp; Engineering Builds</h2>
+          <p class="section-subtitle">
+            Each project is cataloged as a verifiable artifact with SHA-256 checksum verification, MITRE-aligned security notes, and interactive inspection modals.
+          </p>
+        </div>
+
+        <div class="filter-bar">
+          <button type="button" class="filter-pill active" onclick="filterEvidence('ALL', this)">ALL CASES</button>
+          <button type="button" class="filter-pill" onclick="filterEvidence('WEB', this)">WEB / FULL-STACK</button>
+          <button type="button" class="filter-pill" onclick="filterEvidence('SYSTEMS', this)">SYSTEMS / DB</button>
+          <button type="button" class="filter-pill" onclick="filterEvidence('IOT', this)">IOT / HARDWARE</button>
+          <button type="button" class="btn-secondary" style="padding:8px 12px;font-size:11px;border-color:rgba(16,185,129,0.4);color:var(--accent-emerald);" onclick="verifyAllHashes()">
+            Verify All SHA-256
+          </button>
+        </div>
+      </div>
+
+      <div id="evidence-grid" class="evidence-grid"></div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 3: INTERACTIVE CYBER LAB & FORENSIC GAMES (#lab)
+    ======================================================================= -->
+    <section id="lab">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            <span>// 02. INTERACTIVE_CYBER_LAB &mdash; HANDS-ON DFIR &amp; SOC SIMULATIONS</span>
+          </div>
+          <h2 class="section-title">Interactive Cyber Lab &amp; Forensic Challenges</h2>
+          <p class="section-subtitle">
+            Defend the perimeter against live packet injections, carve anomalous sectors from a raw USB forensic image, and decode an intercepted packet payload.
+          </p>
+        </div>
+
+        <div class="ctrl-pill rank-pill" style="padding:8px 14px;font-size:12px;">
+          <span>CLEARANCE PROGRESS:</span>
+          <strong id="lab-xp-display">0 / 600 XP</strong>
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <!-- Module A: Firewall Packet Defender -->
+        <div class="card lab-card">
+          <div class="lab-top">
+            <span style="color:var(--accent-cyan);font-weight:700;">[GAME 01] FIREWALL DEFENDER</span>
+            <span>BEST: <strong id="fw-highscore" style="color:var(--accent-emerald);">0</strong></span>
+          </div>
+
+          <div class="lab-intro">
+            <h3 style="font-size:16px;font-weight:700;color:#FFF;">20s Perimeter Intrusion Blitz</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">
+              Click red malicious payloads (<span style="color:var(--accent-crimson);">SQLi, XSS, RANSOM</span>) before they hit the server. Let green packets pass!
+            </p>
+          </div>
+
+          <div class="lab-body">
+            <div class="lab-subpanel">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+                <span>SCORE: <strong id="fw-score" style="color:var(--accent-cyan);">0</strong></span>
+                <span>HP: <strong id="fw-integrity-text" style="color:var(--accent-emerald);">100%</strong></span>
+                <span>TIME: <strong id="fw-timer" style="color:var(--accent-amber);">20s</strong></span>
+              </div>
+              <div class="progress-track" style="margin-top:0;">
+                <div id="fw-integrity-bar" class="progress-fill" style="width:100%;background:var(--accent-emerald);"></div>
+              </div>
+            </div>
+
+            <div class="fw-arena">
+              <div class="fw-server-zone">CORE_SRV</div>
+              <div id="fw-packets" style="position:absolute;inset:0;"></div>
+              <div id="fw-overlay" class="fw-overlay">
+                <p id="fw-status-msg" style="font-family:var(--font-mono);font-size:11px;color:var(--text-body);">
+                  Ready to defend UEL-CORE-SRV perimeter.
+                </p>
+                <button type="button" id="fw-start-btn" onclick="startFirewallBlitz()" class="btn-primary" style="padding:8px 14px;font-size:11px;">
+                  Start 20s Wave
+                </button>
+              </div>
+            </div>
+
+            <div class="lab-subpanel">
+              <div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:4px;">
+                <span>PERIMETER_STATUS:</span>
+                <span id="fw-footer-state" style="color:var(--accent-cyan);">STANDBY</span>
+              </div>
+              <p id="fw-footer-note" style="color:var(--text-body);line-height:1.45;">
+                Intercept hostile packets in-transit; allow verified TLS/SSH traffic through.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module B: Raw Disk Sector Carver -->
+        <div class="card lab-card">
+          <div class="lab-top">
+            <span style="color:var(--accent-amber);font-weight:700;">[DFIR 02] SECTOR CARVER</span>
+            <span id="carver-progress" style="color:var(--accent-emerald);font-weight:700;">0 / 4 CARVED</span>
+          </div>
+
+          <div class="lab-intro">
+            <h3 style="font-size:16px;font-weight:700;color:#FFF;">suspect_usb_01.dd Hex Dump</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">
+              Click the 4 highlighted amber hex sectors to carve deleted forensic artifacts from unallocated disk clusters.
+            </p>
+          </div>
+
+          <div class="lab-body">
+            <div id="sector-grid" class="sector-grid"></div>
+
+            <div class="lab-subpanel">
+              <div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:4px;">
+                <span>CARVED_BUFFER:</span>
+                <span id="carved-sector-id" style="color:var(--accent-cyan);">AWAITING_SECTOR</span>
+              </div>
+              <p id="carved-output-text" style="color:var(--text-body);line-height:1.45;">
+                Select any highlighted amber hex offset above to extract raw strings...
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module C: Packet Cipher Sandbox -->
+        <div class="card lab-card">
+          <div class="lab-top">
+            <span style="color:var(--accent-emerald);font-weight:700;">[CTF 03] PACKET CIPHER</span>
+            <span id="cipher-status-pill" style="color:var(--text-muted);font-weight:700;">LOCKED</span>
+          </div>
+
+          <div class="lab-intro">
+            <h3 style="font-size:16px;font-weight:700;color:#FFF;">Intercepted PCAP Payload</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">
+              Decode the captured Base64 transmission string below and submit the recovered flag to unlock Analyst clearance.
+            </p>
+          </div>
+
+          <div class="lab-body">
+            <div class="lab-subpanel" style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;font-size:10px;color:var(--text-muted);padding-bottom:6px;border-bottom:1px solid var(--border-subtle);">
+                <span>SRC: 192.168.1.44 &rarr; 10.0.8.12</span>
+                <span style="color:var(--accent-amber);">TCP/443 // 40B</span>
+              </div>
+              <div>
+                <div style="color:var(--text-muted);font-size:10px;margin-bottom:3px;">CAPTURED_STREAM (BASE64):</div>
+                <div id="cipher-payload-display" style="color:var(--accent-cyan);word-break:break-all;font-weight:700;">
+                  RkxBR3tVRUxfREZJUl9MT05ET05fMjAyNn0=
+                </div>
+              </div>
+              <div style="padding-top:6px;border-top:1px dashed var(--border-subtle);">
+                <div style="color:var(--text-muted);font-size:10px;margin-bottom:2px;">TRANSFORM_BUFFER:</div>
+                <div id="cipher-preview-text" style="color:var(--text-body);word-break:break-all;">
+                  [AWAITING_DECODE_OPERATION]
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;">
+                <button type="button" onclick="runBase64Helper()" class="btn-secondary" style="padding:7px 8px;font-size:11px;">Decode Base64</button>
+                <button type="button" onclick="runRot13Helper()" class="btn-secondary" style="padding:7px 8px;font-size:11px;">Toggle ROT13</button>
+                <button type="button" onclick="resetCipherSandbox()" class="btn-secondary" style="padding:7px 9px;font-size:11px;" title="Reset Stream">Reset</button>
+              </div>
+              <div style="display:flex;gap:8px;min-width:0;">
+                <input id="flag-input" type="text" placeholder="FLAG{...}" class="field-input" style="flex:1 1 auto;min-width:0;padding:8px 10px;font-family:var(--font-mono);font-size:12px;" />
+                <button type="button" onclick="verifyCipherFlag()" class="btn-primary" style="flex-shrink:0;padding:8px 14px;font-size:11px;">Verify</button>
+              </div>
+            </div>
+
+            <div class="lab-subpanel">
+              <div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:4px;">
+                <span>CHALLENGE_STATUS:</span>
+                <span id="cipher-footer-state" style="color:var(--accent-amber);">ENCRYPTED</span>
+              </div>
+              <p id="cipher-result-box" style="color:var(--text-body);line-height:1.45;">
+                Hint: Use "Decode Base64" or decode manually to inspect the flag.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 4: CHAIN OF CUSTODY & CREDENTIALS VAULT (#custody)
+    ======================================================================= -->
+    <section id="custody">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>// 03. CHAIN_OF_CUSTODY &mdash; VERIFIED ACADEMIC &amp; CAREER LOG</span>
+          </div>
+          <h2 class="section-title">Chain of Custody &amp; Credentials Vault</h2>
+          <p class="section-subtitle">
+            Filterable chronological academic record from Kathmandu to London, industry roles across IT systems, backend engineering, and visual design, plus verified certifications.
+          </p>
+        </div>
+
+        <!-- Matching Pill-Shaped Category Filter Buttons -->
+        <div class="filter-bar">
+          <button type="button" class="filter-pill active" onclick="filterCustody('ALL', this)">ALL RECORDS</button>
+          <button type="button" class="filter-pill" onclick="filterCustody('EDUCATION', this)">EDUCATION &amp; CERTS</button>
+          <button type="button" class="filter-pill" onclick="filterCustody('EXPERIENCE', this)">EXPERIENCE</button>
+          <button type="button" class="filter-pill" onclick="filterCustody('INFOSEC', this)">INFOSEC &amp; DFIR</button>
+        </div>
+      </div>
+
+      <div class="custody-grid">
+        <!-- Left Column: Chronological Timeline -->
+        <div id="custody-timeline" class="timeline-stack">
+          <!-- 1. MSc UEL -->
+          <div class="timeline-entry custody-item" data-custody="EDUCATION INFOSEC">
+            <span class="timeline-dot emerald"></span>
+            <div class="card custody-card">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">
+                <span style="padding:3px 9px;border-radius:6px;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.35);color:var(--accent-emerald);font-weight:700;">
+                  ACTIVE CASE // POSTGRADUATE
+                </span>
+                <span style="color:var(--text-muted);">2026/09 &ndash; Present</span>
+              </div>
+              <h3 style="font-size:17px;font-weight:700;color:#FFF;">MSc Information Security and Digital Forensics</h3>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--accent-cyan);margin-top:3px;">
+                University of East London &bull; London, United Kingdom
+              </p>
+              <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+                Specializing in digital forensics investigation, incident response, network traffic analysis, cyber threat intelligence, and enterprise information security governance.
+              </p>
+            </div>
+          </div>
+
+          <!-- 2. Digital Marketing and IT Officer -->
+          <div class="timeline-entry custody-item" data-custody="EXPERIENCE INFOSEC">
+            <span class="timeline-dot"></span>
+            <div class="card custody-card">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">
+                <span style="padding:3px 9px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:var(--accent-cyan);font-weight:700;">
+                  EXPERIENCE // IT OPERATIONS
+                </span>
+                <span style="color:var(--text-muted);">2023/06 &ndash; 2025/10</span>
+              </div>
+              <h3 style="font-size:17px;font-weight:700;color:#FFF;">Digital Marketing and IT Officer</h3>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:3px;">
+                Sabhyata International Pvt. Ltd &bull; Kathmandu, Nepal
+              </p>
+              <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+                Administered company IT infrastructure, web systems maintenance, technical troubleshooting, endpoint hygiene, and data-driven digital campaigns.
+              </p>
+            </div>
+          </div>
+
+          <!-- 3. Graphic Designer -->
+          <div class="timeline-entry custody-item" data-custody="EXPERIENCE">
+            <span class="timeline-dot"></span>
+            <div class="card custody-card">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">
+                <span style="padding:3px 9px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:var(--accent-cyan);font-weight:700;">
+                  EXPERIENCE // VISUAL &amp; UI DESIGN
+                </span>
+                <span style="color:var(--text-muted);">2024/02 &ndash; 2024/04</span>
+              </div>
+              <h3 style="font-size:17px;font-weight:700;color:#FFF;">Graphic Designer</h3>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:3px;">
+                Nepa Works Pvt. Ltd &bull; Kathmandu, Nepal
+              </p>
+              <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+                Crafted brand identities, UI/UX layouts, and high-clarity visual assets using Figma, Adobe Photoshop, Illustrator, InDesign, and Affinity.
+              </p>
+            </div>
+          </div>
+
+          <!-- 4. Backend Developer Intern -->
+          <div class="timeline-entry custody-item" data-custody="EXPERIENCE INFOSEC">
+            <span class="timeline-dot slate"></span>
+            <div class="card custody-card">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">
+                <span style="padding:3px 9px;border-radius:6px;background:var(--bg-input);border:1px solid var(--border-subtle);color:var(--text-body);font-weight:700;">
+                  EXPERIENCE // BACKEND DEV
+                </span>
+                <span style="color:var(--text-muted);">Kathmandu, Nepal</span>
+              </div>
+              <h3 style="font-size:17px;font-weight:700;color:#FFF;">Backend Developer Intern</h3>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:3px;">
+                Texas Imaginology Pvt Ltd &bull; Kathmandu, Nepal
+              </p>
+              <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+                Built server-side logic and RESTful workflows with Python and Django, designing normalized SQL schemas and secure authentication flows.
+              </p>
+            </div>
+          </div>
+
+          <!-- 5. BIT Degree -->
+          <div class="timeline-entry custody-item" data-custody="EDUCATION">
+            <span class="timeline-dot slate"></span>
+            <div class="card custody-card">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">
+                <span style="padding:3px 9px;border-radius:6px;background:var(--bg-input);border:1px solid var(--border-subtle);color:var(--text-body);font-weight:700;">
+                  UNDERGRADUATE DEGREE
+                </span>
+                <span style="color:var(--text-muted);">2021 &ndash; 2024</span>
+              </div>
+              <h3 style="font-size:17px;font-weight:700;color:#FFF;">Bachelor's in Information Technology (BIT)</h3>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:3px;">
+                Texas College of Management and IT &bull; Kathmandu, Nepal
+              </p>
+              <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+                Core foundations in software development, computer networks, operating systems, database architecture, and information systems.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Verified Certifications, Courses & Languages -->
+        <div class="vault-stack">
+          <!-- Verified Python 3 Certificate -->
+          <div class="card custody-card custody-item" data-custody="EDUCATION INFOSEC">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:12px;">
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:6px;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.35);color:var(--accent-emerald);font-weight:700;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+                VERIFIED CERTIFICATE
+              </span>
+              <span style="color:var(--text-muted);">2025/06 &ndash; 2025/07</span>
+            </div>
+
+            <h3 style="font-size:17px;font-weight:700;color:#FFF;">Python 3 Certificate</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:2px;">Programming Hub</p>
+
+            <div style="margin-top:14px;padding:12px 14px;border-radius:var(--radius-md);background:var(--bg-input);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div style="font-family:var(--font-mono);">
+                <span style="display:block;font-size:10px;color:var(--text-muted);">CREDENTIAL ID</span>
+                <strong style="font-size:13px;color:var(--accent-cyan);">1752129201709</strong>
+              </div>
+              <button type="button" onclick="copyText('1752129201709', 'Python 3 Credential ID copied!')" class="btn-secondary" style="padding:6px 11px;font-size:11px;">
+                Copy ID
+              </button>
+            </div>
+          </div>
+
+          <!-- Python with Django Course -->
+          <div class="card custody-card custody-item" data-custody="EDUCATION INFOSEC">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;margin-bottom:10px;">
+              <span style="padding:4px 9px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:var(--accent-cyan);font-weight:700;">
+                SPECIALIZATION COURSE
+              </span>
+              <span style="color:var(--text-muted);">2022 &ndash; 2022/09</span>
+            </div>
+            <h3 style="font-size:17px;font-weight:700;color:#FFF;">Python with Django</h3>
+            <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:2px;">
+              Texas Imaginology &bull; Kathmandu, Nepal
+            </p>
+            <p style="font-size:13px;color:var(--text-body);margin-top:8px;">
+              Full-stack web engineering covering Django MVT architecture, ORM database modeling, authentication, and server-side security best practices.
+            </p>
+          </div>
+
+          <!-- Language Protocols -->
+          <div class="card custody-card custody-item" data-custody="EDUCATION EXPERIENCE INFOSEC">
+            <div style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;color:var(--accent-cyan);font-weight:700;margin-bottom:14px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              <span>LANGUAGE_PROTOCOLS</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px;font-family:var(--font-mono);font-size:12px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:#FFF;">English</span>
+                  <span style="color:var(--accent-emerald);">Fluent (Writing &amp; Speaking)</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:96%;background:var(--accent-emerald);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:#FFF;">Nepali</span>
+                  <span style="color:var(--accent-cyan);">Native</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--accent-cyan);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:#FFF;">Hindi</span>
+                  <span style="color:var(--text-body);">Fluent</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:90%;background:#60A5FA;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 5: TECHNICAL CAPABILITIES MATRIX (#skills)
+    ======================================================================= -->
+    <section id="skills">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+              <rect x="9" y="9" width="6" height="6"/>
+            </svg>
+            <span>// 04. TECHNICAL_CAPABILITIES &mdash; MULTI-DOMAIN MATRIX</span>
+          </div>
+          <h2 class="section-title">Technical Capabilities Matrix</h2>
+          <p class="section-subtitle">
+            Filterable skill telemetry spanning Information Security &amp; DFIR, Backend &amp; Web Engineering, and UI/UX Visual Communication.
+          </p>
+        </div>
+
+        <div class="filter-bar">
+          <button type="button" class="filter-pill active" onclick="filterSkills('ALL', this)">ALL DOMAINS</button>
+          <button type="button" class="filter-pill" onclick="filterSkills('DFIR', this)">INFOSEC &amp; DFIR</button>
+          <button type="button" class="filter-pill" onclick="filterSkills('DEV', this)">BACKEND &amp; WEB</button>
+          <button type="button" class="filter-pill" onclick="filterSkills('DESIGN', this)">UI/UX &amp; DESIGN</button>
+        </div>
+      </div>
+
+      <div class="skills-grid">
+        <!-- InfoSec & DFIR -->
+        <div class="card skill-card" data-domain="DFIR">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="endpoint-icon emerald">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <span class="tag-chip" style="color:var(--accent-emerald);border-color:rgba(16,185,129,0.35);">MSC_TRACK</span>
+          </div>
+          <div>
+            <h3 style="font-size:17px;font-weight:700;color:#FFF;">Information Security &amp; DFIR</h3>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Forensic investigation &amp; defensive security operations</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-family:var(--font-mono);font-size:12px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Digital Forensics &amp; Artifact Analysis</span><span style="color:var(--accent-emerald);">90%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:90%;background:var(--accent-emerald);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Incident Response &amp; Threat Modeling</span><span style="color:var(--accent-emerald);">86%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:86%;background:var(--accent-emerald);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Network Traffic Inspection</span><span style="color:var(--accent-emerald);">85%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:85%;background:var(--accent-emerald);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>OWASP Web Application Security</span><span style="color:var(--accent-emerald);">91%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:91%;background:var(--accent-emerald);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backend & Web -->
+        <div class="card skill-card" data-domain="DEV">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="endpoint-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </div>
+            <span class="tag-chip" style="color:var(--accent-cyan);border-color:rgba(56,189,248,0.35);">FULL_STACK</span>
+          </div>
+          <div>
+            <h3 style="font-size:17px;font-weight:700;color:#FFF;">Backend &amp; Web Engineering</h3>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Server architecture, APIs &amp; relational data</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-family:var(--font-mono);font-size:12px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Python &amp; Security Automation</span><span style="color:var(--accent-cyan);">94%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:94%;background:var(--accent-cyan);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Django &amp; REST APIs</span><span style="color:var(--accent-cyan);">90%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:90%;background:var(--accent-cyan);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>JavaScript &amp; React.js</span><span style="color:var(--accent-cyan);">85%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:85%;background:var(--accent-cyan);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>HTML5 / CSS3 &amp; SQL Databases</span><span style="color:var(--accent-cyan);">92%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:92%;background:var(--accent-cyan);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UI/UX & Design -->
+        <div class="card skill-card" data-domain="DESIGN">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="endpoint-icon" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.35);color:var(--accent-amber);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
+            </div>
+            <span class="tag-chip" style="color:var(--accent-amber);border-color:rgba(245,158,11,0.35);">UI_UX_CRAFT</span>
+          </div>
+          <div>
+            <h3 style="font-size:17px;font-weight:700;color:#FFF;">UI/UX &amp; Visual Communication</h3>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Human-centric interfaces &amp; visual reporting</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-family:var(--font-mono);font-size:12px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Figma &amp; Interface Prototyping</span><span style="color:var(--accent-amber);">91%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:91%;background:var(--accent-amber);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Adobe Photoshop &amp; Illustrator</span><span style="color:var(--accent-amber);">93%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:93%;background:var(--accent-amber);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Adobe InDesign &amp; Affinity</span><span style="color:var(--accent-amber);">88%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:88%;background:var(--accent-amber);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;"><span>Canva &amp; Visual Systems</span><span style="color:var(--accent-amber);">94%</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:94%;background:var(--accent-amber);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 6: ESTABLISH ENCRYPTED TRANSMISSION (#contact)
+    ======================================================================= -->
+    <section id="contact">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>// 05. ENCRYPTED_TRANSMISSION_CONSOLE &mdash; DIRECT DISPATCH</span>
+          </div>
+          <h2 class="section-title">Establish Encrypted Transmission</h2>
+          <p class="section-subtitle">
+            Open to UK graduate roles, SOC analyst positions, digital forensics research collaborations, and full-stack Python engineering opportunities.
+          </p>
+        </div>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Left Column: Clean Aligned Direct Endpoints -->
+        <div class="contact-endpoints">
+          <!-- Email Endpoint -->
+          <div class="card endpoint-card">
+            <div class="endpoint-left">
+              <div class="endpoint-icon">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </div>
+              <div style="min-width:0;">
+                <span style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">EMAIL_ENDPOINT</span>
+                <a href="mailto:contact@kabiraj.dev" style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:#FFF;">
+                  contact@kabiraj.dev
+                </a>
+              </div>
+            </div>
+            <button type="button" onclick="copyText('contact@kabiraj.dev', 'Email copied!')" class="btn-secondary" style="padding:6px 11px;font-size:11px;">
+              COPY
+            </button>
+          </div>
+
+          <!-- UK Direct Line -->
+          <div class="card endpoint-card">
+            <div class="endpoint-left">
+              <div class="endpoint-icon emerald">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <div style="min-width:0;">
+                <span style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">DIRECT_LINE (UK)</span>
+                <a href="tel:+4407344849231" style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:#FFF;">
+                  +44 07344849231
+                </a>
+              </div>
+            </div>
+            <button type="button" onclick="copyText('+44 07344849231', 'UK phone number copied!')" class="btn-secondary" style="padding:6px 11px;font-size:11px;">
+              COPY
+            </button>
+          </div>
+
+          <!-- GitHub & LinkedIn Pair -->
+          <div class="social-row">
+            <a href="https://github.com/kulfinnit" target="_blank" rel="noopener noreferrer" class="card endpoint-card" style="justify-content:flex-start;">
+              <div class="endpoint-left">
+                <div class="endpoint-icon">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                  </svg>
+                </div>
+                <div style="min-width:0;">
+                  <span style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">GITHUB</span>
+                  <strong style="font-family:var(--font-mono);font-size:13px;color:#FFF;">@kulfinnit</strong>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://linkedin.com/in/kabiraj-sapkota" target="_blank" rel="noopener noreferrer" class="card endpoint-card" style="justify-content:flex-start;">
+              <div class="endpoint-left">
+                <div class="endpoint-icon">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                  </svg>
+                </div>
+                <div style="min-width:0;">
+                  <span style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">LINKEDIN</span>
+                  <strong style="font-family:var(--font-mono);font-size:13px;color:#FFF;">Kabiraj Sapkota</strong>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Web Domain -->
+          <div class="card endpoint-card">
+            <div class="endpoint-left">
+              <div class="endpoint-icon">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </div>
+              <div style="min-width:0;">
+                <span style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">WEB_DOMAIN</span>
+                <a href="https://www.kabiraj.dev" target="_blank" rel="noopener noreferrer" style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:#FFF;">
+                  www.kabiraj.dev
+                </a>
+              </div>
+            </div>
+            <a href="https://www.kabiraj.dev" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:6px 11px;font-size:11px;">
+              OPEN
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Encrypted Dispatch Payload Form -->
+        <form onsubmit="handleDispatch(event)" class="card dispatch-form">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:11px;">
+            <span style="color:var(--accent-cyan);font-weight:700;">ENCRYPTED_DISPATCH_PAYLOAD</span>
+            <span style="color:var(--text-muted);">TLS 1.3 // contact@kabiraj.dev</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="form-row-2">
+              <div>
+                <label for="tx-name" class="field-label">Sender Callsign / Name *</label>
+                <input id="tx-name" type="text" required placeholder="Alex Mercer / Security Lead" class="field-input" />
+              </div>
+              <div>
+                <label for="tx-email" class="field-label">Return Email *</label>
+                <input id="tx-email" type="email" required placeholder="alex@cybersec.co.uk" class="field-input" />
+              </div>
+            </div>
+
+            <div>
+              <label for="tx-subject" class="field-label">Subject / Role Type *</label>
+              <input id="tx-subject" type="text" required placeholder="SOC Analyst / Digital Forensics Collaboration" class="field-input" />
+            </div>
+
+            <div>
+              <label for="tx-message" class="field-label">Message Payload *</label>
+              <textarea id="tx-message" rows="4" required placeholder="Compose message payload for Kabiraj Sapkota..." class="field-input"></textarea>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button type="submit" class="btn-primary" style="width:100%;text-align:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+              <span>TRANSMIT &amp; GENERATE SHA-256 RECEIPT</span>
+            </button>
+
+            <div id="tx-receipt" style="display:none;padding:12px;border-radius:var(--radius-md);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.35);font-family:var(--font-mono);font-size:11px;">
+              <div style="color:var(--accent-emerald);font-weight:700;">[200 OK] ENCRYPTED PACKET TRANSMITTED</div>
+              <div id="tx-receipt-hash" style="color:#FFF;word-break:break-all;margin-top:4px;"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;">
+      <div>
+        <strong style="color:#FFF;">KABIRAJ SAPKOTA</strong> &bull; MSc Information Security &amp; Digital Forensics (UEL London)
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <a href="mailto:contact@kabiraj.dev">contact@kabiraj.dev</a>
+        <a href="https://github.com/kulfinnit" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://linkedin.com/in/kabiraj-sapkota" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://www.kabiraj.dev" target="_blank" rel="noopener noreferrer">www.kabiraj.dev</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       FORENSIC ARTIFACT INSPECTOR MODAL
+  ========================================================================= -->
+  <div id="artifact-modal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg-input);border-bottom:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="modal-id" class="evd-id-badge">EVD-001</span>
+          <span id="modal-mitre" style="color:var(--text-muted);">T1078 // ACCESS CONTROL</span>
+        </div>
+        <button type="button" onclick="closeModal()" class="btn-secondary" style="padding:4px 10px;">ESC &times;</button>
+      </div>
+
+      <div style="padding:22px;display:flex;flex-direction:column;gap:16px;max-height:80vh;overflow-y:auto;">
+        <div>
+          <div id="modal-period" style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);"></div>
+          <h3 id="modal-title" style="font-size:20px;font-weight:700;color:#FFF;margin-top:4px;"></h3>
+        </div>
+
+        <p id="modal-desc" style="font-size:14px;color:var(--text-body);"></p>
+
+        <div style="padding:14px;border-radius:var(--radius-md);background:var(--bg-input);border:1px solid rgba(16,185,129,0.35);">
+          <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent-emerald);margin-bottom:8px;">
+            SECURITY &amp; FORENSIC POSTURE NOTES
+          </div>
+          <ul id="modal-notes" style="padding-left:18px;font-size:13px;color:var(--text-body);display:flex;flex-direction:column;gap:6px;"></ul>
+        </div>
+
+        <div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-bottom:4px;">SHA-256 ARTIFACT CHECKSUM</div>
+          <div id="modal-sha" style="padding:10px;border-radius:var(--radius-sm);background:var(--bg-input);border:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);word-break:break-all;"></div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--border-subtle);">
+          <div id="modal-stack" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          <a id="modal-url" href="https://github.com/kulfinnit" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            Open Artifact Source &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
