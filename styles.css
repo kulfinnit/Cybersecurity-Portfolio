@@ -461,7 +461,7 @@ main {
   width: 100%;
   max-width: 100%;
   padding-top: 30px;
-  padding-bottom: 88px;
+  padding-bottom: 60px;
   display: flex;
   flex-direction: column;
   gap: 72px;
@@ -1522,7 +1522,7 @@ footer {
   max-width: 100%;
   border-top: 1px solid var(--border-subtle);
   background: rgba(9, 13, 22, 0.95);
-  margin-top: 2px;
+  margin-top: 0px;
   padding: 28px 0;
   font-family: var(--font-mono);
   font-size: 12px;
