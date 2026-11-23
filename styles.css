@@ -1522,7 +1522,7 @@ footer {
   max-width: 100%;
   border-top: 1px solid var(--border-subtle);
   background: rgba(9, 13, 22, 0.95);
-  margin-top: 8px;
+  margin-top: 2px;
   padding: 28px 0;
   font-family: var(--font-mono);
   font-size: 12px;
