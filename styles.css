@@ -460,7 +460,7 @@ main {
   z-index: 1;
   width: 100%;
   max-width: 100%;
-  padding-top: 48px;
+  padding-top: 30px;
   padding-bottom: 88px;
   display: flex;
   flex-direction: column;
@@ -469,7 +469,7 @@ main {
 
 @media (min-width: 960px) {
   main {
-    margin-top: 36px;
+    margin-top: 20px;
     padding-top: 52px;
     padding-bottom: 112px;
     gap: 92px;
