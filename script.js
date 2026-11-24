@@ -247,7 +247,7 @@ const commands = {
     '<pre style="font-size:10px;line-height:1.25;color:var(--accent-cyan);">' +
     '   .--------.      kabiraj@fun-forensics\n' +
     '  / .------. \\     ---------------------\n' +
-    ' | |  [KS]  | |    Host: UEL London, UK (MSc ISDF)\n' +
+    ' | |  [KS]  | |    Host: Fun Forensics, UK (MSc ISDF)\n' +
     '_| |________| |_   Origin: Kathmandu, Nepal\n' +
     '\'.__  | DFIR |  __.\' Stack: Python / Django / React / DFIR\n' +
     '    \'.____.\'       Cert ID: 1752129201709 (Verified)</pre>',
