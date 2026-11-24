@@ -1404,7 +1404,9 @@ main {
   height: 38px;
   border-radius: var(--radius-md);
   background: rgba(56, 189, 248, 0.1);
+  background: color-mix(in srgb, var(--accent-cyan) 11%, transparent);
   border: 1px solid rgba(56, 189, 248, 0.3);
+  border-color: color-mix(in srgb, var(--accent-cyan) 35%, transparent);
   color: var(--accent-cyan);
   display: flex;
   align-items: center;
@@ -1483,6 +1485,23 @@ main {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+}
+
+#blog-search {
+  width: 100%;
+  max-width: 280px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+@media (max-width: 639px) {
+  #blog-search {
+    max-width: 100%;
+  }
+}
+
+#blog-modal .modal-box {
+  border-color: var(--accent-cyan);
 }
 
 .toast {

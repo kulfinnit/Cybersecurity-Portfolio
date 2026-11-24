@@ -24,22 +24,33 @@ function closeMobileDrawer() {
 // =========================================================================
 // 2. CLEARANCE XP & RANK SYSTEM
 // =========================================================================
-let xpTotal = 0;
-const unlockedBadges = new Set();
+let xpTotal = Number(localStorage.getItem('ks_dfir_xp')) || 0;
+const unlockedBadges = new Set(JSON.parse(localStorage.getItem('ks_dfir_badges') || '[]'));
 
-function awardXp(pts, key, message) {
-  if (key && unlockedBadges.has(key)) return;
-  if (key) unlockedBadges.add(key);
-
-  xpTotal = Math.min(600, xpTotal + pts);
+function syncXpUi() {
   let rank = 'RECON GUEST';
   if (xpTotal >= 400) rank = 'LEAD FORENSIC INVESTIGATOR';
   else if (xpTotal >= 220) rank = 'INCIDENT RESPONDER';
   else if (xpTotal >= 80) rank = 'JUNIOR ANALYST';
 
-  document.getElementById('rank-title').textContent = 'RANK: ' + rank;
-  document.getElementById('rank-xp').textContent = xpTotal + ' XP';
-  document.getElementById('lab-xp-display').textContent = xpTotal + ' / 600 XP';
+  const rankTitle = document.getElementById('rank-title');
+  const rankXp = document.getElementById('rank-xp');
+  const labXp = document.getElementById('lab-xp-display');
+  if (rankTitle) rankTitle.textContent = 'RANK: ' + rank;
+  if (rankXp) rankXp.textContent = xpTotal + ' XP';
+  if (labXp) labXp.textContent = xpTotal + ' / 600 XP';
+}
+
+function awardXp(pts, key, message) {
+  if (key && unlockedBadges.has(key)) return;
+  if (key) {
+    unlockedBadges.add(key);
+    try { localStorage.setItem('ks_dfir_badges', JSON.stringify([...unlockedBadges])); } catch (e) {}
+  }
+
+  xpTotal = Math.min(600, xpTotal + pts);
+  try { localStorage.setItem('ks_dfir_xp', String(xpTotal)); } catch (e) {}
+  syncXpUi();
 
   if (message) showToast('+' + pts + ' XP — ' + message);
 }
@@ -122,7 +133,8 @@ function playTone(kind) {
 // =========================================================================
 // 4. DEFCON SWITCHER & MATRIX RAIN
 // =========================================================================
-let defconState = 1;
+const savedDefcon = Number(localStorage.getItem('ks_dfir_defcon'));
+let defconState = [1, 3, 5].includes(savedDefcon) ? savedDefcon : 1;
 let matrixInterval = null;
 
 function cycleDefcon() {
@@ -131,30 +143,41 @@ function cycleDefcon() {
   else setDefcon(5);
 }
 
-function setDefcon(lvl) {
+function setDefcon(lvl, silent) {
   defconState = lvl;
+  try { localStorage.setItem('ks_dfir_defcon', String(lvl)); } catch (e) {}
   document.body.classList.remove('defcon-3', 'defcon-1');
   const btn = document.getElementById('defcon-btn');
 
   if (lvl === 5) {
     clearInterval(matrixInterval);
-    btn.textContent = 'DEFCON 5 (NORMAL)';
-    btn.className = 'ctrl-pill defcon-btn-5';
-    playTone('click');
+    if (btn) {
+      btn.textContent = 'DEFCON 5 (NORMAL)';
+      btn.className = 'ctrl-pill defcon-btn-5';
+    }
+    if (!silent) playTone('click');
   } else if (lvl === 3) {
     clearInterval(matrixInterval);
     document.body.classList.add('defcon-3');
-    btn.textContent = 'DEFCON 3 (ELEVATED)';
-    btn.className = 'ctrl-pill defcon-btn-3';
-    playTone('blip');
-    showToast('DEFCON 3: Elevated Forensic Watch engaged.');
+    if (btn) {
+      btn.textContent = 'DEFCON 3 (ELEVATED)';
+      btn.className = 'ctrl-pill defcon-btn-3';
+    }
+    if (!silent) {
+      playTone('blip');
+      showToast('DEFCON 3: Elevated Forensic Watch engaged.');
+    }
   } else if (lvl === 1) {
     document.body.classList.add('defcon-1');
-    btn.textContent = 'DEFCON 1 (RED ALERT)';
-    btn.className = 'ctrl-pill defcon-btn-1';
+    if (btn) {
+      btn.textContent = 'DEFCON 1 (RED ALERT)';
+      btn.className = 'ctrl-pill defcon-btn-1';
+    }
     startMatrix();
-    playTone('alert');
-    showToast('DEFCON 1: Red Alert active — Matrix telemetry online!');
+    if (!silent) {
+      playTone('alert');
+      showToast('DEFCON 1: Red Alert active — Matrix telemetry online!');
+    }
   }
 }
 
@@ -241,13 +264,13 @@ const commands = {
     '<div>PROGRAM: MSc Information Security and Digital Forensics (2026/09 &ndash; Present)</div>' +
     '<div>INSTITUTION: University of East London (London, UK)</div>' +
     '<div>ORIGIN: Kathmandu, Nepal (BIT, Texas College of Management and IT)</div>' +
-    '<div>CONTACT: <span style="color:var(--accent-cyan);">contact@kabiraj.dev</span></div>' +
+    '<div>CONTACT: <span style="color:var(--accent-cyan);">contact@kabiraj.dev</span> | +44 07344849231</div>' +
     '<div style="color:var(--accent-emerald);">CORE STACK: Python, Django, React, JS, SQL, DFIR, Incident Response</div>',
   neofetch: () =>
     '<pre style="font-size:10px;line-height:1.25;color:var(--accent-cyan);">' +
-    '   .--------.      kabiraj@fun-forensics\n' +
+    '   .--------.      kabiraj@uel-forensics\n' +
     '  / .------. \\     ---------------------\n' +
-    ' | |  [KS]  | |    Host: Fun Forensics, UK (MSc ISDF)\n' +
+    ' | |  [KS]  | |    Host: UEL London, UK (MSc ISDF)\n' +
     '_| |________| |_   Origin: Kathmandu, Nepal\n' +
     '\'.__  | DFIR |  __.\' Stack: Python / Django / React / DFIR\n' +
     '    \'.____.\'       Cert ID: 1752129201709 (Verified)</pre>',
@@ -287,7 +310,7 @@ const commands = {
     awardXp(100, 'cli_hire', 'Executive Recruitment Handshake');
     return '<div style="color:var(--accent-emerald);font-weight:700;">[sudo] authentication verified &mdash; ACCESS GRANTED!</div>' +
       '<div>Available in London, UK for Cybersecurity, SOC, DFIR, and Python Engineering roles.</div>' +
-      '<div style="color:var(--accent-cyan);">Direct dispatch: contact@kabiraj.dev</div>';
+      '<div style="color:var(--accent-cyan);">Direct dispatch: contact@kabiraj.dev | +44 07344849231</div>';
   }
 };
 
@@ -321,24 +344,30 @@ function runTerminalCmd(raw) {
   out.scrollTop = out.scrollHeight;
 }
 
-document.getElementById('terminal-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const inp = document.getElementById('terminal-input');
-  runTerminalCmd(inp.value);
-  inp.value = '';
-});
+const terminalForm = document.getElementById('terminal-form');
+if (terminalForm) {
+  terminalForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const inp = document.getElementById('terminal-input');
+    runTerminalCmd(inp.value);
+    inp.value = '';
+  });
+}
 
-document.getElementById('terminal-input').addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowUp' && historyList.length > 0) {
-    e.preventDefault();
-    historyPos = Math.max(0, historyPos - 1);
-    this.value = historyList[historyPos];
-  } else if (e.key === 'ArrowDown' && historyList.length > 0) {
-    e.preventDefault();
-    historyPos = Math.min(historyList.length, historyPos + 1);
-    this.value = historyPos === historyList.length ? '' : historyList[historyPos];
-  }
-});
+const terminalInput = document.getElementById('terminal-input');
+if (terminalInput) {
+  terminalInput.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowUp' && historyList.length > 0) {
+      e.preventDefault();
+      historyPos = Math.max(0, historyPos - 1);
+      this.value = historyList[historyPos];
+    } else if (e.key === 'ArrowDown' && historyList.length > 0) {
+      e.preventDefault();
+      historyPos = Math.min(historyList.length, historyPos + 1);
+      this.value = historyPos === historyList.length ? '' : historyList[historyPos];
+    }
+  });
+}
 
 // =========================================================================
 // 7. EVIDENCE LOCKER
@@ -892,10 +921,178 @@ function escapeHtml(str) {
   }[m]));
 }
 
-// Initialize interactive modules immediately
-renderEvidence('ALL');
-buildSectorGrid();
-setDefcon(1);
+// =========================================================================
+// 14. BLOG / FIELD NOTES ENGINE (blog.html)
+// =========================================================================
+const blogPosts = [
+  {
+    id: 'LOG-001',
+    offset: '0x1010',
+    cat: 'DFIR',
+    date: '2026-11-12',
+    readTime: '5 MIN READ',
+    title: 'Volatile Memory Triage: Extracting Suspicious Process Trees with Volatility 3',
+    summary: 'A practical workflow for capturing RAM images during incident response, isolating injected DLLs, and mapping rogue network sockets back to parent PIDs.',
+    tags: ['Volatility 3', 'Memory Forensics', 'Incident Response', 'Windows'],
+    content: [
+      '<p>When investigating an active endpoint compromise, disk artifacts alone often miss fileless payloads living strictly in user-mode or kernel-mode memory. Preserving a raw memory dump before rebooting the host maintains critical volatile evidence.</p>',
+      '<pre style="padding:12px 14px;border-radius:var(--radius-md);background:var(--bg-input);border:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:12px;color:var(--accent-emerald);overflow-x:auto;">$ python3 vol.py -f memory_capture.raw windows.pslist\n$ python3 vol.py -f memory_capture.raw windows.netscan --pid 4188</pre>',
+      '<p>Start by enumerating running processes with <strong>windows.pslist</strong> and comparing against <strong>windows.psscan</strong> to spot unlinked EPROCESS structures hidden via Direct Kernel Object Manipulation (DKOM). Cross-reference anomalous parent-child pairs—such as <code>winword.exe</code> spawning <code>powershell.exe</code>—with <strong>windows.cmdline</strong>.</p>',
+      '<p>Finally, run <strong>windows.netscan</strong> to correlate suspicious PIDs with external C2 IP addresses and extract injected memory regions with <strong>windows.malfind</strong> for static hashing and YARA scanning.</p>'
+    ]
+  },
+  {
+    id: 'LOG-002',
+    offset: '0x1080',
+    cat: 'CTF',
+    date: '2026-10-28',
+    readTime: '4 MIN READ',
+    title: 'PCAP Stream Reconstruction: Unmasking Exfiltrated Payloads Over DNS & HTTP',
+    summary: 'Walkthrough on isolating anomalous beacon intervals in Wireshark, carving Base64-encoded chunks from HTTP headers, and automating reassembly.',
+    tags: ['Wireshark', 'PCAP', 'Network Forensics', 'CTF'],
+    content: [
+      '<p>Large packet captures can look overwhelming until you filter out routine TLS noise and inspect protocol hierarchy statistics. In Wireshark, checking <strong>Statistics &rarr; Protocol Hierarchy</strong> immediately highlights unexpected spikes in cleartext HTTP or oversized DNS TXT queries.</p>',
+      '<pre style="padding:12px 14px;border-radius:var(--radius-md);background:var(--bg-input);border:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:12px;color:var(--accent-emerald);overflow-x:auto;">http.request.method == "POST" && frame contains "X-Session-Token"</pre>',
+      '<p>By filtering on HTTP POST requests and following the TCP stream, encoded payload blocks frequently stand out inside custom headers or form parameters. Exporting the raw stream bytes and verifying SHA-256 checksums before and after decoding ensures evidentiary integrity throughout the investigation.</p>'
+    ]
+  },
+  {
+    id: 'LOG-003',
+    offset: '0x10F0',
+    cat: 'PYTHON',
+    date: '2026-10-09',
+    readTime: '6 MIN READ',
+    title: 'Automating Chain-of-Custody Hashing & Integrity Manifests in Python',
+    summary: 'Building a zero-dependency Python CLI utility using hashlib and pathlib to generate tamper-evident SHA-256 evidence manifests for forensic acquisitions.',
+    tags: ['Python 3', 'SHA-256', 'Automation', 'Chain of Custody'],
+    content: [
+      '<p>Every digital forensic acquisition relies on provable bit-stream integrity from collection through courtroom or executive reporting. Computing hashes manually across nested evidence directories is slow and error-prone.</p>',
+      '<pre style="padding:12px 14px;border-radius:var(--radius-md);background:var(--bg-input);border:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:12px;color:var(--accent-emerald);overflow-x:auto;">import hashlib, pathlib\nwith open("suspect_usb_01.dd", "rb") as f:\n    digest = hashlib.file_digest(f, "sha256").hexdigest()</pre>',
+      '<p>Using Python’s built-in <code>hashlib.file_digest()</code> alongside <code>pathlib.Path.rglob()</code>, you can stream multi-gigabyte disk images in fixed chunks without exhausting system RAM, writing UTC timestamps, byte sizes, and SHA-256 digests into an immutable JSON manifest.</p>'
+    ]
+  },
+  {
+    id: 'LOG-004',
+    offset: '0x1160',
+    cat: 'DFIR',
+    date: '2026-09-21',
+    readTime: '5 MIN READ',
+    title: 'Unallocated Cluster Carving: Recovering Deleted Artifacts from Raw USB Images',
+    summary: 'How file signatures (magic bytes) and sector alignment let forensic analysts reconstruct deleted documents even after filesystem metadata is wiped.',
+    tags: ['Disk Forensics', 'File Carving', 'Magic Bytes', 'Autopsy'],
+    content: [
+      '<p>Deleting a file on FAT32, exFAT, or NTFS typically marks its directory entry or MFT record as unallocated without immediately zeroing out the underlying data clusters.</p>',
+      '<p>By scanning raw bitstreams for known header and footer signatures—such as <code>25 50 44 46</code> (<code>%PDF</code>) or <code>FF D8 FF</code> (JPEG)—carving tools can reassemble contiguous artifacts directly from unallocated space before new writes overwrite those sectors.</p>'
+    ]
+  }
+];
+
+let activeBlogCat = 'ALL';
+let activeBlogQuery = '';
+let currentOpenPostId = null;
+
+function renderBlogPosts() {
+  const grid = document.getElementById('blog-grid');
+  if (!grid) return;
+
+  const q = activeBlogQuery.toLowerCase();
+  const filtered = blogPosts.filter(post => {
+    const matchCat = activeBlogCat === 'ALL' || post.cat === activeBlogCat;
+    const matchQuery = !q ||
+      post.title.toLowerCase().includes(q) ||
+      post.summary.toLowerCase().includes(q) ||
+      post.tags.some(t => t.toLowerCase().includes(q));
+    return matchCat && matchQuery;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="card" style="padding:24px;grid-column:1/-1;font-family:var(--font-mono);font-size:13px;color:var(--text-muted);">[0 MATCHES] No field notes match your current filter/query.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(post => `
+    <article class="card evd-card">
+      <div>
+        <div class="evd-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="evd-id-badge">${post.id}</span>
+            <span class="hex-meta">${post.offset}</span>
+            <span style="color:var(--text-muted);">${post.date}</span>
+          </div>
+          <span class="tag-chip">${post.cat} // ${post.readTime}</span>
+        </div>
+
+        <h2 class="evd-title">${post.title}</h2>
+        <p class="evd-desc">${post.summary}</p>
+      </div>
+
+      <div class="evd-footer">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${post.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}
+        </div>
+        <button type="button" class="btn-secondary" style="padding:7px 12px;font-size:11px;border-color:rgba(56,189,248,0.4);color:var(--accent-cyan);" onclick="openBlogModal('${post.id}')">
+          Read Briefing &nearr;
+        </button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function filterBlog(cat, btn) {
+  playTone('click');
+  activeBlogCat = cat;
+  btn.parentElement.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderBlogPosts();
+}
+
+function searchBlog(val) {
+  activeBlogQuery = val.trim();
+  renderBlogPosts();
+}
+
+function openBlogModal(id) {
+  const post = blogPosts.find(p => p.id === id);
+  if (!post) return;
+  currentOpenPostId = id;
+  playTone('blip');
+  awardXp(35, 'blog_' + id, 'Read Field Note ' + id);
+
+  document.getElementById('bmodal-id').textContent = post.id;
+  document.getElementById('bmodal-cat').textContent = post.cat;
+  document.getElementById('bmodal-meta').textContent = post.date + ' • ' + post.readTime;
+  document.getElementById('bmodal-title').textContent = post.title;
+  document.getElementById('bmodal-tags').innerHTML = post.tags.map(t => `<span class="tag-chip">${t}</span>`).join('');
+  document.getElementById('bmodal-body').innerHTML = post.content.join('');
+  document.getElementById('blog-modal').classList.add('open');
+}
+
+function closeBlogModal() {
+  const modal = document.getElementById('blog-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function copyCurrentPostUrl() {
+  if (!currentOpenPostId) return;
+  const shareUrl = 'https://www.kabiraj.dev/blog.html#' + currentOpenPostId;
+  copyText(shareUrl, currentOpenPostId + ' link copied to clipboard!');
+}
+
+// =========================================================================
+// 15. INITIALIZE ACTIVE PAGE MODULES & PERSISTED STATE
+// =========================================================================
+syncXpUi();
+setDefcon(defconState, true);
+
+if (document.getElementById('evidence-grid')) renderEvidence('ALL');
+if (document.getElementById('sector-grid')) buildSectorGrid();
+if (document.getElementById('blog-grid')) {
+  renderBlogPosts();
+  const hashId = window.location.hash.replace('#', '').toUpperCase();
+  if (hashId && blogPosts.some(p => p.id === hashId)) {
+    openBlogModal(hashId);
+  }
+}
 
 // Trigger hero name scramble on launch and every 7 seconds
 const heroTitleEl = document.getElementById('hero-title');
