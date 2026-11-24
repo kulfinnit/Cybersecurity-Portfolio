@@ -264,13 +264,13 @@ const commands = {
     '<div>PROGRAM: MSc Information Security and Digital Forensics (2026/09 &ndash; Present)</div>' +
     '<div>INSTITUTION: University of East London (London, UK)</div>' +
     '<div>ORIGIN: Kathmandu, Nepal (BIT, Texas College of Management and IT)</div>' +
-    '<div>CONTACT: <span style="color:var(--accent-cyan);">contact@kabiraj.dev</span> | +44 07344849231</div>' +
+    '<div>CONTACT: <span style="color:var(--accent-cyan);">contact@kabiraj.dev</span></div>' +
     '<div style="color:var(--accent-emerald);">CORE STACK: Python, Django, React, JS, SQL, DFIR, Incident Response</div>',
   neofetch: () =>
     '<pre style="font-size:10px;line-height:1.25;color:var(--accent-cyan);">' +
-    '   .--------.      kabiraj@uel-forensics\n' +
+    '   .--------.      kabiraj@fun-forensics\n' +
     '  / .------. \\     ---------------------\n' +
-    ' | |  [KS]  | |    Host: UEL London, UK (MSc ISDF)\n' +
+    ' | |  [KS]  | |    Host: Fun Forensics, UK\n' +
     '_| |________| |_   Origin: Kathmandu, Nepal\n' +
     '\'.__  | DFIR |  __.\' Stack: Python / Django / React / DFIR\n' +
     '    \'.____.\'       Cert ID: 1752129201709 (Verified)</pre>',
