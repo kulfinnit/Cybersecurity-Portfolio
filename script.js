@@ -245,7 +245,7 @@ const commands = {
     '<div style="color:var(--accent-emerald);">CORE STACK: Python, Django, React, JS, SQL, DFIR, Incident Response</div>',
   neofetch: () =>
     '<pre style="font-size:10px;line-height:1.25;color:var(--accent-cyan);">' +
-    '   .--------.      kabiraj@uel-forensics\n' +
+    '   .--------.      kabiraj@fun-forensics\n' +
     '  / .------. \\     ---------------------\n' +
     ' | |  [KS]  | |    Host: UEL London, UK (MSc ISDF)\n' +
     '_| |________| |_   Origin: Kathmandu, Nepal\n' +
