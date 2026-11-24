@@ -310,7 +310,7 @@ const commands = {
     awardXp(100, 'cli_hire', 'Executive Recruitment Handshake');
     return '<div style="color:var(--accent-emerald);font-weight:700;">[sudo] authentication verified &mdash; ACCESS GRANTED!</div>' +
       '<div>Available in London, UK for Cybersecurity, SOC, DFIR, and Python Engineering roles.</div>' +
-      '<div style="color:var(--accent-cyan);">Direct dispatch: contact@kabiraj.dev | +44 07344849231</div>';
+      '<div style="color:var(--accent-cyan);">Direct dispatch: contact@kabiraj.dev</div>';
   }
 };
 
